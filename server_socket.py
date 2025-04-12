@@ -2,7 +2,7 @@ import socket
 
 from http_parser import parse_http_request
 from http_response import create_http_response
-
+from my_requests import Request
 
 def main():
     host = "localhost"
@@ -18,7 +18,7 @@ def main():
         data = conn.recv(1024).decode()
         if not data:
             break
-        http_method, path, http_version, headers, body = parse_http_request(data)
+        request = Request(parse_http_request(data))
 
         data = create_http_response(
             'HTTP/1.1',
