@@ -1,11 +1,12 @@
 import socket
 
-from html_handler.http_parser import parse_http_request
 from html_handler.http_response import create_http_response
+from html_handler.http_parser import parse_http_request
+from .urls import deliver
 from requests.my_requests import Request
 
 
-def server_socket_run(host, port):
+def server_socket_run(host, port, get_response):
     server_socket = socket.socket()
     server_socket.bind((host, port))
     server_socket.listen(5)
@@ -28,14 +29,8 @@ def server_socket_run(host, port):
                         break
 
                     request = Request(*parse_http_request(data))
+                    response = get_response(request)
 
-                    body = 'Connection is good'
-                    response = create_http_response(
-                        'HTTP/1.1',
-                        '200 OK',
-                        ['Content-Type: text/plain', f'Content-Length: {len(body)}'],
-                        body
-                    )
                     conn.send(response.encode())
 
     except KeyboardInterrupt:
